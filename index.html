@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGIS Industri Mebel - Tunjungsekar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- 1. RESET & BASIC STYLE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            color: #333; 
+            background-color: #f8f9fa; 
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* --- 2. PALET WARNA (BIRU & ORANYE) --- */
+        :root {
+            --primary-color: #0f4c75;
+            --primary-gradient: linear-gradient(135deg, #0f4c75 0%, #3282b8 100%);
+            --accent-color: #e67e22; 
+            --accent-hover: #d35400;
+            --white: #ffffff;
+            --light-bg: #e1e8ee;
+        }
+
+        /* --- 3. HEADER --- */
+        header {
+            background: var(--white);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo { 
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8rem; 
+            font-weight: 600; 
+            color: var(--primary-color);
+        }
+        .logo span { color: var(--accent-color); }
+        
+        nav ul { list-style: none; display: flex; gap: 25px; }
+        nav a { color: #555; font-weight: 600; text-decoration: none; transition: 0.3s; }
+        nav a:hover { color: var(--primary-color); }
+
+        /* --- 4. HERO SECTION --- */
+        .hero {
+            background: linear-gradient(rgba(15, 76, 117, 0.85), rgba(50, 130, 184, 0.8)), url('https://images.unsplash.com/photo-1595428774223-ef52624120d2?q=80&w=2070&auto=format&fit=crop'); 
+            background-size: cover;
+            background-position: center;
+            height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+            border-bottom-left-radius: 60px;
+            border-bottom-right-radius: 60px;
+            padding: 0 20px;
+            box-shadow: 0 15px 30px rgba(15, 76, 117, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+        .hero-content h1 { font-size: 3.5rem; margin-bottom: 1rem; font-family: 'Fredoka', sans-serif; }
+        .hero-content p { font-size: 1.2rem; margin-bottom: 2.5rem; max-width: 700px; margin: 0 auto 2.5rem auto; opacity: 0.95; }
+        
+        .btn-cta {
+            background: var(--accent-color);
+            color: var(--white);
+            padding: 18px 45px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(230, 126, 34, 0.4);
+            display: inline-block;
+        }
+        .btn-cta:hover { transform: translateY(-5px); background: var(--accent-hover); }
+
+        /* --- 5. STATISTIK FLOATING --- */
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: -50px;
+            margin-bottom: 4rem;
+            padding: 0 20px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 10;
+        }
+        .stat-box {
+            background: var(--white);
+            padding: 25px 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            min-width: 220px;
+            transition: 0.3s;
+            border-bottom: 5px solid var(--accent-color);
+        }
+        .stat-box:hover { transform: translateY(-5px); }
+        .stat-box h2 { font-size: 2.8rem; color: var(--primary-color); font-family: 'Fredoka', sans-serif; margin-bottom: 5px; }
+        .stat-box p { color: #666; font-weight: 600; font-size: 1rem; }
+
+        /* --- 6. SECTION TITLE --- */
+        .section-title { text-align: center; margin-bottom: 3rem; padding: 0 20px; }
+        .section-title h2 { color: var(--primary-color); font-size: 2.2rem; font-family: 'Fredoka', sans-serif; margin-bottom: 10px; }
+        .section-title p { color: #666; max-width: 600px; margin: 0 auto; }
+
+        /* --- 7. MAP PREVIEW --- */
+        .map-preview { padding: 2rem 5% 5rem 5%; background: #f8f9fa; }
+        .map-frame {
+            max-width: 1000px;
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            border: 5px solid #fff;
+            position: relative;
+        }
+        .map-frame::after {
+            content: 'Klik Tombol di Atas untuk Interaksi Penuh';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(15, 76, 117, 0.8);
+            color: white;
+            text-align: center;
+            padding: 12px;
+            font-weight: 500;
+        }
+        .map-frame img { width: 100%; height: auto; display: block; transition: transform 0.5s ease; }
+        .map-frame:hover img { transform: scale(1.02); }
+
+        /* --- 8. KEUNGGULAN SYSTEM --- */
+        .features { padding: 4rem 10%; text-align: center; background: var(--white); }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .feature-card {
+            background: #f9fbfd;
+            padding: 40px 30px;
+            border-radius: 20px;
+            transition: 0.3s;
+            border: 1px solid #e1e8ee;
+        }
+        .feature-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(15, 76, 117, 0.1); border-color: #3282b8; }
+        .feature-icon {
+            font-size: 3.5rem; margin-bottom: 25px; display: inline-block;
+            background: #e3f2fd; width: 90px; height: 90px; line-height: 90px;
+            border-radius: 50%; color: var(--primary-color);
+        }
+        .feature-card h3 { margin-bottom: 15px; color: var(--primary-color); font-size: 1.3rem; }
+        .feature-card p { color: #666; font-size: 0.95rem; }
+
+        /* --- 9. SECTION PENGEMBANG (YANG DIPERKECIL) --- */
+        .developer-section {
+            padding: 5rem 5%; /* Padding section dikurangi */
+            background: linear-gradient(to bottom, #ffffff 0%, #f0f4f8 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .dev-card-wrapper {
+            background: var(--white);
+            width: 100%;
+            max-width: 750px; /* Lebar maksimum diperkecil dari 900px */
+            border-radius: 20px; /* Radius sudut sedikit dikurangi */
+            box-shadow: 0 15px 40px rgba(15, 76, 117, 0.12);
+            display: flex;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .dev-card-wrapper:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Bagian Kiri: Foto / Avatar */
+        .dev-profile-side {
+            flex: 0.9; /* Proporsi sedikit dikurangi */
+            background: var(--primary-gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px; /* Padding dikurangi */
+            position: relative;
+        }
+        
+        .dev-profile-side::before {
+            content: ''; position: absolute; width: 160px; height: 160px; /* Hiasan diperkecil */
+            background: rgba(255,255,255,0.1); border-radius: 50%; top: -40px; left: -40px;
+        }
+
+        .dev-avatar-box {
+            width: 130px; /* Ukuran avatar diperkecil */
+            height: 130px;
+            background: var(--white);
+            border-radius: 50%;
+            padding: 4px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .dev-avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #f0f4f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem; /* Ukuran ikon diperkecil */
+        }
+
+        /* Bagian Kanan: Informasi */
+        .dev-info-side {
+            flex: 1.5;
+            padding: 35px 30px; /* Padding dikurangi */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .dev-label {
+            color: var(--accent-color);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-size: 0.85rem; /* Font diperkecil */
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dev-label::after { content: ''; height: 2px; width: 40px; background: var(--accent-color); display: block; }
+
+        .dev-name {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8rem; /* Ukuran nama diperkecil */
+            color: var(--primary-color);
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        .dev-nim {
+            background: #e3f2fd;
+            color: var(--primary-color);
+            padding: 6px 15px; /* Padding NIM diperkecil */
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem; /* Font NIM diperkecil */
+            display: inline-block;
+            margin-bottom: 15px;
+            align-self: flex-start;
+        }
+
+        .dev-desc {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.95rem; /* Font deskripsi diperkecil */
+            line-height: 1.5;
+        }
+
+        .univ-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            color: #888;
+            font-size: 0.85rem; /* Font info univ diperkecil */
+        }
+        .univ-icon { font-size: 1.3rem; }
+
+        /* --- 10. SIMPLE FOOTER COPYRIGHT --- */
+        .simple-footer {
+            background: var(--primary-color);
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            padding: 15px;
+            font-size: 0.8rem;
+        }
+
+        /* Responsif HP */
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 2.2rem; }
+            .hero { border-radius: 0; height: auto; padding: 120px 20px 80px 20px; }
+            nav ul { display: none; }
+            
+            .dev-card-wrapper { flex-direction: column; text-align: center; max-width: 90%; }
+            .dev-profile-side { padding: 30px 20px; }
+            .dev-info-side { padding: 30px 25px; align-items: center; }
+            .dev-label { justify-content: center; }
+            .dev-label::after { display: none; }
+            .dev-nim { align-self: center; }
+            .univ-info { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">WebGIS<span>Tunjungsekar</span></div>
+        <nav>
+            <ul>
+                <li><a href="#">Beranda</a></li>
+                <li><a href="#preview">Peta</a></li>
+                <li><a href="#fitur">Fitur</a></li>
+                <li><a href="#pengembang">Pengembang</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Pemetaan Digital Industri Mebel</h1>
+            <p>Platform interaktif modern untuk menelusuri persebaran lokasi dan potensi ekonomi kreatif mebel di wilayah Kelurahan Tunjungsekar.</p>
+            
+            <a href="qgis2web/index.html" class="btn-cta" target="_blank">🚀 Buka Peta Interaktif</a>
+        </div>
+    </section>
+
+    <div class="stats-container">
+        <div class="stat-box">
+            <h2>10</h2>
+            <p>Titik Lokasi Usaha</p>
+        </div>
+        <div class="stat-box">
+            <h2>100%</h2>
+            <p>Data Terverifikasi</p>
+        </div>
+        <div class="stat-box">
+            <h2>SIG</h2>
+            <p>Berbasis Web</p>
+        </div>
+    </div>
+
+    <section id="preview" class="map-preview">
+        <div class="section-title">
+            <h2>Gambaran Umum Persebaran</h2>
+            <p>Berikut adalah tampilan layout visualisasi spasial industri mebel di area Tunjungsekar.</p>
+        </div>
+
+        <div class="map-frame">
+            <img src="Mabel TunjungSekar.png" alt="Preview Layout Peta WebGIS">
+        </div>
+    </section>
+
+    <section id="fitur" class="features">
+        <div class="section-title">
+            <h2>Keunggulan Sistem</h2>
+            <p>Teknologi pemetaan modern untuk kemudahan akses informasi.</p>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🗺️</div>
+                <h3>Visualisasi Interaktif</h3>
+                <p>Peta digital dinamis yang memungkinkan pengguna untuk melakukan zoom, pan, dan eksplorasi area Tunjungsekar dengan detail.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📌</div>
+                <h3>Detail Informasi UMKM</h3>
+                <p>Setiap titik lokasi dilengkapi data atribut lengkap: nama pemilik, kontak, spesialisasi produk, hingga foto usaha.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3>Pencarian & Filter</h3>
+                <p>Fitur untuk menemukan lokasi usaha tertentu berdasarkan nama atau kategori produk dengan cepat dan akurat.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="pengembang" class="developer-section">
+        <div class="section-title">
+            <h2>Tentang Pengembang</h2>
+            <p>Profil mahasiswa pengembang sistem informasi geografis ini.</p>
+        </div>
+
+        <div class="dev-card-wrapper">
+            <div class="dev-profile-side">
+                <div class="dev-avatar-box">
+                    <div class="dev-avatar-img">
+                        <span>👩‍🎓</span> 
+                    </div>
+                </div>
+            </div>
+
+            <div class="dev-info-side">
+                <div class="dev-label">Profile Developer</div>
+                
+                <h3 class="dev-name">Sekar Ayu Tri Hapsari</h3>
+                
+                <div class="dev-nim">NIM: 23201035</div>
+                
+                <p class="dev-desc">
+                    Mahasiswa aktif yang memiliki minat dalam pengembangan Sistem Informasi Geografis (SIG) dan teknologi pemetaan digital. Proyek ini disusun sebagai Tugas Akhir (UAS) untuk membantu visualisasi potensi UMKM daerah.
+                </p>
+
+                <div class="univ-info">
+                    <span class="univ-icon">🎓</span>
+                    <span>Teknik Informatika / Sistem Informasi Geografis</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="simple-footer">
+        &copy; 2026 WebGIS Tunjungsekar. All Rights Reserved.
+    </footer>
+
+</body>
+</html>
